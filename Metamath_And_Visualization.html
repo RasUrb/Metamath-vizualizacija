@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Metamath ant it's visualization</title>
+    <script src="https://cdn.jsdelivr.net/npm/brython@3/brython.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/brython@3/brython_stdlib.js"></script>
+    <script type="text/python" src="src/main.py"></script>
+    <!-- <link rel="stylesheet" type="text/css" href="styles.css" /> -->
+
+    
+    <style>
+        /* Apply CSS styling for side-by-side pre elements */
+        .body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .container {
+            flex: 1 1 45%;
+            margin: 10px;
+            border: 1px solid #202b9e;
+            padding: 10px;
+        }
+
+        #metamath_title {
+            text-align: center;
+            font-size: 30px;
+            background: linear-gradient(to right, rgb(209, 0, 42),rgb(255, 0, 51),rgb(255, 160, 43), rgb(255, 255, 100));
+            background-clip: text;
+            color: transparent;
+        }
+
+        #metamath_name_with_img {
+            text-align: center;
+            background-image:  #72ffef;
+
+            gap: 10px;
+        }
+
+        /* Container for math symbol buttons */
+        #Math_symbol_buttons {
+            display: flex;
+            /* Enables flexbox layout */
+            gap: 5px;
+            /* Adds space between the buttons */
+            justify-content: left;
+            /* Centers the buttons horizontally */
+            align-items: center;
+            /* Aligns the buttons vertically */
+            padding: 10px;
+            /* Optional: padding around the container */
+        }
+
+        /* General styling for the buttons */
+        #Math_symbol_buttons button {
+            background-color: #ffffff;
+            /* white */
+            border: 2px solid #ccc;
+            /* Light grey border */
+            color: #333;
+            /* Dark text color */
+            font-size: 10px;
+            /* Larger font for the symbols */
+            padding: 2px 10px;
+            /* Padding inside the buttons */
+            border-radius: 2px;
+            /* Rounded corners */
+            cursor: pointer;
+            /* Pointer cursor on hover */
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            /* Smooth transitions */
+        }
+
+        #Math_symbol_buttons button:hover {
+            background-color: #ddd;
+            /* Darker background on hover */
+            transform: scale(1.1);
+            /* Slightly enlarge the button on hover */
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .custom-file-label {
+            display: inline-block;
+            padding: 1px 10px;
+            background-color: #e8e6e6;
+            border: 1px solid #000000;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .custom-file-label:hover {
+            background-color: #b2b2b2;
+            border: 1px solid #ccc;
+        }
+
+        #function_write {
+            padding-left: 10px;
+            margin: 0;
+            overflow: auto;
+            width: 95%;
+            height: 250px;
+            white-space: pre-wrap; /* Ensures lines break if too long */
+        }
+    </style>
+</head>
+
+<body onload="brython()">
+    <div>
+        <div id="metamath_name_with_img">
+            <!-- <img src="img/metamath_icon.png" width="100" height="100" alt="Sorry can't find img" /> -->
+            <h1 id="metamath_title">Metamath ir jos vizualizacija</h1>
+        </div>
+        <div class="body">
+            <div class="container">
+                <div>
+                    <div>
+                        <button id="Info">?</button>
+                        <label for="file_mm_input" class="custom-file-label">Choose file</label>
+                        <input type="file" id="file_mm_input" accept=".mm" class="file-input" />
+                        <button id="edit" >edit</button>
+                    </div>
+                </div>
+
+                <div id="Math_simbol_buttons">
+                    <button id="symbol_↔">↔</button>
+                    <button id="symbol_⊢">⊢</button>
+                    <button id="symbol_→">→</button>
+                    <button id="symbol_¬">¬</button>
+                    <button id="symbol_=">=</button>
+                    <button id="symbol_^">^</button>
+                    <button id="symbol_&">&</button>
+                </div>
+                <div>
+                    <label for="function_write">Edit text:</label>
+                    <div><textarea id="function_write" class="container">
+                </textarea><pre id="textInfo"></pre></div>
+                    
+                </div>
+                <!-- <div class="container">
+                    <pre id="file_mm_content">
+$( irodymas kad ⊢ ¬x → x $)
+$c ¬ → ⊢ wff ( ) $. $( zenkldai $)
+$v x $. $( simboliai $)
+                                    
+wx $f wff x $.
+                                    
+wxn $e ⊢ ( ¬ ¬ x → x ) $.
+wxnn $e ⊢ ¬ x $.
+wxnp $a ⊢ x $.
+                                    
+proof1 $p ⊢ x $= wx 
+wxn wxnn
+wxnp $.
+proof2 $p x $= n 
+d av
+wxnp $.
+</pre>
+
+                </div> -->
+
+                <!-- <div><input id="edit" type="text" placeholder="Text input"></div> -->
+                <div>
+                    <a id="output_mmverify"></a>
+                </div>
+            </div>
+
+            <div class="container">
+                <h2>Metamath graph</h2>
+                <div>
+                    <button id="reload_function">↺</button>
+                    <button id = "save_img">save</button>
+                </div>
+                
+                <div>
+                    <div>
+                        <button id="zoom_in">+</button>
+                        <button id="zoom_out">-</button>
+                    </div>
+                   
+                    <svg id="panel" xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500" style="
+                border-style: solid;
+                border-width: 1;
+                border-color: #024869;
+              ">
+                        <!-- <g ></g> -->
+                    </svg>
+                    <div>
+                        <button id="move_left">◄</button>
+                            <button id="move_up">▲</button>
+                            <button id="move_down">▼</button>
+                        <button id="move_right">►</button>  
+                    </div>
+                </div>
+
+                <div id="buttons_of_proof"></div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
