@@ -1,5 +1,5 @@
 # Metamath-vizualizacija
-[here](https://rasurb.github.io.Metamath-vizualizacija/index.html)
+[here](https://rasurb.github.io./Metamath-vizualizacija/index.html)
 ## Programos atsisiuntimas
 
 1. Atidarykite nuorodą į „GitHub” repozitoriją.
