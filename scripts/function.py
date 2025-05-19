@@ -319,10 +319,12 @@ class Function:
     
     def verify_mm(self, texts=None):
         self.update_self(texts)
-        self.error_collector = process_metamath_texts(self.original_text.split("\n"))
+        text = self.replace_to_math_symbols(self.original_text)
+        print(text)
+        self.error_collector = process_metamath_texts(text.split("\n"))
         error_lines = self.error_collector.get_all_line_nums()
-        print("error line", error_lines)
         self.modify_textarea(error_lines)
         self.original_text = self.original_text
         self.build_internal_proof_structure()
+        
         
