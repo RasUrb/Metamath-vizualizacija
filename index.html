@@ -4,11 +4,12 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>home_page</title>
-    <!-- <title>Metamath ant it's visualization</title> -->
+    <title>Metamath ant it's visualization</title>
     <script type="text/javascript" src="brython/brython.min.js"></script>
     <script type="text/javascript" src="brython/brython_stdlib.js"></script>
     <script type="text/python" src="scripts/main.py"></script>
+    <!-- <link rel="stylesheet" type="text/css" href="styles.css" /> -->
+    <!-- <link rel="stylesheet" href="style.css" /> -->
     <style>
         body {
             align-items: center;
@@ -24,7 +25,7 @@
 
         button {
             display: inline-block;
-            height: 20px;
+            height: 25px;
             text-align: center;
             border: 1px solid #000000;
             background-color: rgb(235, 235, 235);
@@ -139,39 +140,57 @@
             /*border: 1px solid rgb(0, 0, 0);*/
             color: rgb(243, 10, 10);
             position: relative;
+            pointer-events: none;
         }
-
-        .arrow-keys {
-            display: grid;
-            grid-template-columns: repeat(3, 25px);
-            gap: 1px;
-            position: relative;
-
-        }
-
-        .zoom_buttons {
-            display: grid;
-            gap: 1px;
-            position: absolute;
-            right: 5px;
-        }
-
-
-        .proof_numbering {
-            width: auto;
-            white-space: nowrap;
-        }
-
         .graph {
             position: relative;
-            /* Establish positioning context */
             width: inherit;
-            /* Match SVG dimensions */
             height: inherit;
-            /* Match SVG dimensions */
-            border: 1px solid rgb(0, 0, 0);
+            border: 1px solid black;
         }
-
+        .graph-controls {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            z-index: 10;
+            pointer-events: none;
+        }
+        
+        .arrow-keys, .zoom-buttons {
+            pointer-events: auto;
+        }
+        
+        .proof_numbering {
+            margin-top: 70px; /* Atitraukia nuo viršaus, kad nesiliestų su mygtukais */
+            z-index: 1;
+            position: relative;
+        }
+        
+        .arrow-keys {
+            display: grid;
+            grid-template-columns: repeat(3, 30px);
+            grid-template-rows: repeat(2, 30px);
+            gap: 2px;
+        }
+        
+        .zoom-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .arrow-keys button,
+        .zoom-buttons button {
+            width: 30px;
+            height: 30px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+  
         .highlight {
             color: red;
         }
@@ -348,8 +367,8 @@
         </div>
         <div class="graph">
             <div id="buttons_of_proof" class="proof_numbering"><button>1</button><button>2</button></div>
-            <div>
-                <div class="arrow-keys"></div>
+            <div class="graph-controls">
+                <div class="arrow-keys">
                     <div></div>
                     <button id="move_up">▲</button>
                     <div></div>
@@ -357,19 +376,15 @@
                     <button id="move_down">▼</button>
                     <button id="move_right">►</button>
                 </div>
-                <div class="zoom_buttons">
-                <button id="zoom_in" class="zoom_button">+</button>
-                <button id="zoom_out" class="zoom_button">-</button>
+                <div class="zoom-buttons">
+                    <button id="zoom_in">+</button>
+                    <button id="zoom_out">-</button>
+                </div>
             </div>
-                
-                
-            </div>
-            
             <div>
                 <svg id="panel" xmlns="http://www.w3.org/2000/svg" class="panel" viewbox="0 0 500 500"></svg>
 
             </div>
-        </div>
 
 </body>
 
