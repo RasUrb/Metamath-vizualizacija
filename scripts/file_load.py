@@ -67,7 +67,7 @@ def file_read(event=None):
 
 
 def show_popup(event):
-    call_text = '''call_text = '''
+    call_text = '''
 Press "Edit" to modify the file. After making changes, the diagram will automatically update.
 
 The diagram visualizes everything between "$=" and "$." — this is the formal proof content.
@@ -105,8 +105,6 @@ Extras:
 - "Rectangle resizing" allows custom diagram sizing via `rect_height` and `rect_width`.
 Then press "Submit" to apply your changes.
 '''
-
-    '''
     alert(call_text)
     
 how_move = """To move graph push a,w,s,d or arrow. Push r to move back to original place."""
