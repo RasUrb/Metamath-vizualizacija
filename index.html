@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>home_page</title>
+    <!-- <title>Metamath ant it's visualization</title> -->
+    <script type="text/javascript" src="brython/brython.min.js"></script>
+    <script type="text/javascript" src="brython/brython_stdlib.js"></script>
+    <script type="text/python" src="scripts/main.py"></script>
+    <style>
+        body {
+            align-items: center;
+            /*height: 600px;*/
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 35px;
+
+        }
+
+        button {
+            display: inline-block;
+            height: 20px;
+            text-align: center;
+            border: 1px solid #000000;
+            background-color: rgb(235, 235, 235);
+            border-radius: 5px;
+            position: relative;
+            transition: background-color 0.3s ease;
+        }
+
+        .line_numbering {
+            background-color: rgb(255, 225, 225);
+            display: flex;
+            border: 1px solid black;
+            width: inherit;
+            height: calc(16 * 1.3em + 10px);
+            /* 16 lines at ~1.3em + padding */
+            overflow: hidden;
+            position: relative;
+
+        }
+
+        .numbering {
+            background-color: rgb(255, 225, 225);
+            padding-top: 2px;
+            width: 6%;
+            font-size: 20px;
+            padding-left: 2px;
+            padding-right: 2px;
+            line-height: 1.3em;
+            text-align: right;
+            overflow-y: scroll;
+            overflow-y: hidden;
+
+        }
+
+        #container_textarea {
+            width: 100%;
+            padding-top: 2px;
+            columns: 16;
+            line-height: 1.3em;
+            font-size: 20px;
+            outline: none;
+            color: rgb(0, 0, 0);
+            resize: none;
+            overflow-y: scroll;
+            border: none;
+            /* Removes the border */
+            background-color: transparent;
+            /* Optional: Makes the background transparent */
+        }
+
+        #container_textarea:disabled {
+            display: none;
+            background-color: transparent;
+            /*rgb(240, 240, 240);   Light grey background */
+            color: transparent;
+            overflow-y: scroll;
+        }
+
+        #modify_text {
+            display: none;
+            background-color: white;
+            width: 100%;
+            padding-top: 2px;
+            
+            line-height: 1.3em;
+            font-size: 20px;
+            outline: none;
+            color: rgb(0, 0, 0);
+            resize: none;
+            overflow-y: scroll;
+            border: none;
+            overflow: hidden;
+        }
+
+        #modify_text:disabled {
+            display: none;
+            display: block;
+            overflow-y: scroll;
+        }
+
+        .file_label {
+            display: inline-block;
+            padding: 1px;
+            line-height: 15px;
+            border: 1px solid rgb(0, 0, 0);
+            background-color: rgb(235, 235, 235);
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .file_label:hover,
+        button:hover {
+            background-color: rgb(178, 178, 178);
+            border: 1px solid rgb(0, 0, 0);
+        }
+
+
+
+        #container_textarea {
+            background-color: rgb(255, 255, 255);
+        }
+
+        .panel {
+            width: inherit;
+
+            /*100%;*/
+            height: inherit;
+            /*border: 1px solid rgb(0, 0, 0);*/
+            color: rgb(243, 10, 10);
+            position: relative;
+        }
+
+        .arrow-keys {
+            display: grid;
+            grid-template-columns: repeat(3, 25px);
+            gap: 1px;
+            position: relative;
+
+        }
+
+        .zoom_buttons {
+            display: grid;
+            gap: 1px;
+            position: absolute;
+            right: 5px;
+        }
+
+
+        .proof_numbering {
+            width: auto;
+            white-space: nowrap;
+        }
+
+        .graph {
+            position: relative;
+            /* Establish positioning context */
+            width: inherit;
+            /* Match SVG dimensions */
+            height: inherit;
+            /* Match SVG dimensions */
+            border: 1px solid rgb(0, 0, 0);
+        }
+
+        .highlight {
+            color: red;
+        }
+
+        .highlight_comment {
+            color: rgb(6, 132, 216);
+        }
+
+        #Info {
+            width: 20px;
+        }
+
+        #edit {
+            width: 33px;
+        }
+
+        #reload_function {
+            width: 25px;
+        }
+
+        #save_img {
+            width: 40px;
+        }
+        #color-input:input{
+            height: 10px;
+            width: 10px;
+        }
+        .button-container {
+            margin-top: 20px;
+        }
+        #fileMmInput{
+            display: none;
+        }
+    </style>
+
+</head>
+
+<body onload="brython()">
+    <div style="background-color: rgb(238, 202, 0);">
+        <h1> Metamath visualization</h1>
+    </div>
+    <div id="main_container">
+        <div class="top-bar">
+            <button id="Info">?</button>
+
+            <label for="fileMmInput" class="file_label">File input</label>
+            <input type="file" id="fileMmInput" accept=".mm" class="file_input" />
+            <b></b>
+
+        </div>
+
+        <div id="button-symbol" class="symbol-buttons">
+            <button id="symbol_+">+</button>
+            <button id="symbol_=">=</button>
+            <button id="symbol_≠">≠</button>
+            <button id="symbol_↔">↔</button>
+            <button id="symbol_⊢">⊢</button>
+            <button id="symbol_→">→</button>
+            <button id="symbol_¬">¬</button>
+            <button id="symbol_⊥">⊥</button>
+            <button id="symbol_∧">∧</button>
+            <button id="symbol_∨">∨</button>
+            <button id="symbol_∀">∀</button>
+            <button id="symbol_∃">∃</button>
+            <button id="symbol_ℝ">ℝ</button>
+            <button id="symbol_⊆">⊆</button>
+            <button id="symbol_⊂">⊂</button>
+            <button id="symbol_∪">∪</button>
+            <button id="symbol_∩">∩</button>
+            <button id="symbol_∈">∈</button>
+            <button id="symbol_∉">∉</button>
+            <button id="symbol_&">&</button>
+        </div>
+
+        <div class="edit-bar">
+            <label for="container_textarea">Metamath text:</label>
+            <button id="edit">Edit</button>
+            <!-- <label for="use_iset_mm">iset.mm</label>
+        <input type="checkbox" id="use_iset_mm"> -->
+        </div>
+
+        <div class="line_numbering">
+            <div id="textarea_num_div" class="numbering">
+                1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16
+            </div>
+            <textarea id="container_textarea" rows="16"></textarea>
+            <div id="modify_text" contenteditable="true" ></div>
+
+        </div>
+
+        <div id="text_length"></div>
+        <div id="output_mmverify" style="color:red"></div>
+    </div>
+
+    </div>
+    <div class="color-input">
+        <div>
+            <b>Color of object: </b>
+            <b><label for="colorF_rect">$f:</label></b>
+            <input type="color" id="colorF_rect" value="#ff0000">
+            <b><label for="colorE_rect">$e:</label></b>
+            <input type="color" id="colorE_rect" value="#ff0000">
+            <b><label for="colorA_rect">$a:</label></b>
+            <input type="color" id="colorA_rect" value="#ff0000">
+            <b><label for="colorP_rect">$p:</label></b>
+            <input type="color" id="colorP_rect" value="#ff0000">
+            <b><label for="colorCom_rect">comment:</label></b>
+            <input type="color" id="colorCom_rect" value="#ff0000">
+            <button id="change_color_rect_back">reset</button>
+        </div>
+        <div>
+            <b>Color of text: </b>
+            <b><label for="colorF_text">$f:</label></b>
+            <input type="color" id="colorF_text" value="#ff0000">
+            <b><label for="colorE_text">$e:</label></b>
+            <input type="color" id="colorE_text" value="#ff0000">
+            <b><label for="colorA_text">$a:</label></b>
+            <input type="color" id="colorA_text" value="#ff0000">
+            <b><label for="colorP_text">$p:</label></b>
+            <input type="color" id="colorP_text" value="#ff0000">
+            <b><label for="colorCom_text">comment:</label></b>
+            <input type="color" id="colorCom_text" value="#ff0000">
+            <button id="change_color_text_back">reset</button>
+        </div>
+        <div>
+            <b>Color of stroke: </b>
+            <b><label for="colorF_stroke">$f:</label></b>
+            <input type="color" id="colorF_stroke" value="#ff0000">
+            <b><label for="colorE_stroke">$e:</label></b>
+            <input type="color" id="colorE_stroke" value="#ff0000">
+            <b><label for="colorA_stroke">$a:</label></b>
+            <input type="color" id="colorA_stroke" value="#ff0000">
+            <b><label for="colorP_stroke">$p:</label></b>
+            <input type="color" id="colorP_stroke" value="#ff0000">
+            <b><label for="colorCom_stroke">comment:</label></b>
+            <input type="color" id="colorCom_stroke" value="#ff0000">
+            <button id="change_color_stroke_back">reset</button>
+        </div>
+        <button id="change_all_back">reset</button>
+    </div>
+
+    <div>
+
+        <div>
+
+            <div><div> 
+                <label for="comment_mode">With comments</label>
+                <input type="checkbox" id="comment_mode">
+            </div>
+                <div>
+                <label for="diagram_mode">Step_by_step proof</label>
+                <input type="checkbox" id="diagram_mode">
+                </div>
+                
+
+                <div>
+                    <label for="use_custom_rect">Rectangle resizing</label>
+                    <input type="checkbox" id="use_custom_rect">
+                    <label for="rect_height">rect_height: </label>
+                    <input type="number" id="rect_height" min="1" step="1">
+                    <label for="rect_width">rect width: </label>
+                    <input type="number" id="rect_width" min="1" step="1">
+                    <button id="submit_rect_height_and_width">submit</button>
+                </div>
+
+            </div>
+            <div>
+                <button id="reload_function">↺</button>
+                <!-- <button id="save_img">save</button>
+            <button id="saves">saves</button> -->
+                <button id="downloadSVG">Save Svg</button>
+                <button id="downloadPng">Save png</button>
+            </div>
+        </div>
+        <div class="graph">
+            <div id="buttons_of_proof" class="proof_numbering"><button>1</button><button>2</button></div>
+            <div>
+                <div class="arrow-keys"></div>
+                    <div></div>
+                    <button id="move_up">▲</button>
+                    <div></div>
+                    <button id="move_left">◄</button>
+                    <button id="move_down">▼</button>
+                    <button id="move_right">►</button>
+                </div>
+                <div class="zoom_buttons">
+                <button id="zoom_in" class="zoom_button">+</button>
+                <button id="zoom_out" class="zoom_button">-</button>
+            </div>
+                
+                
+            </div>
+            
+            <div>
+                <svg id="panel" xmlns="http://www.w3.org/2000/svg" class="panel" viewbox="0 0 500 500"></svg>
+
+            </div>
+        </div>
+
+</body>
+
+</html>
