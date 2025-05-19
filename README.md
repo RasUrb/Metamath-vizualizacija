@@ -1,5 +1,4 @@
 # Metamath-vizualizacija
-/tree/main)
 [here](https://rasurb.github.io.Metamath-vizualizacija/index.html)
 ## Programos atsisiuntimas
 
