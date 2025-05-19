@@ -67,16 +67,45 @@ def file_read(event=None):
 
 
 def show_popup(event):
-    call_text = '''Chose file and then press "run". 
-    push to edit file to edit the push to save changes and the diagram will be reupload
-    Diagram will draw what is write on "$=" and "$.". 
-    $c (constant) is used to declare constant symbols (e.g., operators or keywords).
-    $v (variables) is used to declare variables.
-    $f (function) is used for floating hypotheses, where a variable and its type are specified. 
-    
-    $e (example) for essential hypotheses, where an assumption or condition is defined that must be satisfied.
-    $a (axiom) for axioms, where a logical axiom or theorem is introduced without proof.
-    $p (proof) for proofs, where a theorem or conclusion is provided along with a proof.
+    call_text = '''call_text = '''
+Press "Edit" to modify the file. After making changes, the diagram will automatically update.
+
+The diagram visualizes everything between "$=" and "$." — this is the formal proof content.
+
+Metamath directives and syntax:
+
+- $c (constant): declares constant symbols such as operators or keywords.
+  Syntax:           $c symbol1 symbol2 ... $. 
+
+- $v (variable): declares metavariables used in expressions.
+  Syntax:           $v var1 var2 ... $. 
+
+- $f (floating hypothesis): links a variable with a syntactic type (like term or wff).
+  Syntax:           label $f type variable $. 
+  Example:          tt $f term t $.
+
+- $e (essential hypothesis): states assumptions needed to apply an axiom or proof.
+  Syntax:           label $e |- statement $. 
+  Example:          h1 $e |- t = r $.
+
+- $a (axiom): introduces axioms or definitions without proof.
+  Syntax:           label $a |- statement $. 
+  Example:          a1 $a |- ( t = r -> ( r = s -> t = s ) ) $.
+
+- $p (proof): defines a theorem with its proof steps.
+  Syntax:           label $p |- statement $= proof-steps $. 
+  Example:          th1 $p |- t = t $= tt tt weq a1 mp $.
+
+Navigation:
+- Use W/A/S/D or arrow keys to move the diagram.
+- Press R to reset the view to its original position.
+
+Extras:
+- "With comment" checkbox enables display of proof comments.
+- "Rectangle resizing" allows custom diagram sizing via `rect_height` and `rect_width`.
+Then press "Submit" to apply your changes.
+'''
+
     '''
     alert(call_text)
     
