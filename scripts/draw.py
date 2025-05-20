@@ -4,6 +4,12 @@ import browser.html as html  # type: ignore
 import browser.svg as svg  # type: ignore
 import json
 
+DEBUG = False
+
+def log(msg):
+    if DEBUG:
+        print(msg)
+
 default_color_rect = {
     "f": "#c0c4ff",  # function
     "e": "#ffff80",  # example
@@ -81,7 +87,7 @@ class ProofDiagram:
         return size + colors + texts
     def get_total_bounds(self):
         if not self.rectangle:
-            print("Warning: no rectangles to calculate bounds.")
+            log("Warning: no rectangles to calculate bounds.")
             return 0, 0, 0, 0
         else:
             min_x = min(rect.dx for rect in self.rectangle)
@@ -100,16 +106,16 @@ class ProofDiagram:
         
     def draw_all_rectangle(self):
         if not self.rectangle:
-            print("No rectangles to draw.")
+            log("No rectangles to draw.")
         for i, rect in enumerate(self.rectangle):
-            print(f"Drawing rectangle #{i}: class {rect.class_name}, position ({rect.dx}, {rect.dy}), color: {rect.color}")
+            log(f"Drawing rectangle #{i}: class {rect.class_name}, position ({rect.dx}, {rect.dy}), color: {rect.color}")
             self.panel <= rect.draw_rect()
                         
     def draw_all_text(self):
         if not self.text:
-            print("No text to draw.")
+            log("No text to draw.")
         for i, text in enumerate(self.text):
-            #print(f"Drawing text #{i}: class {text.class_name}, position ({text.dx}, {text.dy})")
+            #log(f"Drawing text #{i}: class {text.class_name}, position ({text.dx}, {text.dy})")
             self.panel <= text.curate_text()
     
     def rect_to_oval(self):
@@ -122,7 +128,7 @@ class ProofDiagram:
         pass    
     
     def draw_all(self):
-        print("Redrawing all rectangles and texts...")
+        log("Redrawing all rectangles and texts...")
         self.change_color_rect()
         self.change_color_text()
         self.draw_all_rectangle()
@@ -141,7 +147,7 @@ class ProofDiagram:
                 if rect.class_name == symbol:
                     new_color = rect_colors[symbol]
                     if rect.color != new_color:
-                        print(f"Changing color of class '{symbol}' from {rect.color} to {new_color}")
+                        log(f"Changing color of class '{symbol}' from {rect.color} to {new_color}")
                         rect.change_color_rect(rect_colors[symbol])
     
     def change_color_text(self):
@@ -150,7 +156,7 @@ class ProofDiagram:
                 if text.class_name == symbol:
                     new_color = text_colors[symbol]
                     if text.color != new_color:
-                        print(f"Changing color of class '{symbol}' from {text.color} to {new_color}")
+                        log(f"Changing color of class '{symbol}' from {text.color} to {new_color}")
                         text.change_color(text_colors[symbol])
         
     def rect_height(self, stroke_width, font_size, padding):
@@ -159,7 +165,7 @@ class ProofDiagram:
     #Draw main proof
     def _main_header(self, name, y_pos,width, height, stroke_width, font_size, padding):
         if  width is None:
-            x_pos = 0#(self.svg_width / 4)
+            x_pos = 0 #(self.svg_width / 4)
             rect_w = self.svg_width
         else:
             rect_w = width    
@@ -180,7 +186,7 @@ class ProofDiagram:
         rect_w = self.rect_width(len(func), font_size, stroke_width) if width is None else width
         rect_h = self.rect_height(stroke_width, font_size, padding)  if height is None else height
         
-        print(f" -> Rectangle width: {rect_w}, x: {x_pos}, y: {y_pos}")
+        log(f" -> Rectangle width: {rect_w}, x: {x_pos}, y: {y_pos}")
             
         x_pos = self.svg_width /2  - rect_w / 2
         if func[0] =="$":
@@ -201,13 +207,13 @@ class ProofDiagram:
         return y_pos + rect_h#height
     
     def draw_graph(self, proofs, proofs_name, width = None, height= None, x_pos=0, y_pos=0, stroke_width=2, font_size=20, padding = 10):
-        print(f"Drawing graph for proof: {proofs_name}")
+        log(f"Drawing graph for proof: {proofs_name}")
         y_pos += self._main_header(proofs_name, y_pos, width, height, stroke_width, font_size, padding)#height
-        print(f"y_pos:{y_pos}")
+        log(f"y_pos:{y_pos}")
         for i, func in enumerate(proofs):
-            print(f"Adding proof #{i}: {func}")
+            log(f"Adding proof #{i}: {func}")
             y_pos =  self._draw_single_proof( func, x_pos, y_pos, width, height, stroke_width, font_size, padding) 
-            print(f"y_pos:{y_pos}")
+            log(f"y_pos:{y_pos}")
         self.draw_all()
         
 class Rectangle:
@@ -273,7 +279,7 @@ class Rectangle:
                 self.rect_svg.setAttribute("y", self.dy)
 
     def size(self, width, height):
-                # print(f"rect_svg: {width, height}")
+                # log(f"rect_svg: {width, height}")
                 self.width = width
                 self.height = height
                 self.rect_svg.setAttribute("width", self.width)
@@ -328,7 +334,7 @@ def change_rect_colors(color, rect_class):
 
     for shape in shapes:
         shape.setAttribute("fill", color)
-        print(f"Updated <rect> with class '{key}' to color {color}")
+        log(f"Updated <rect> with class '{key}' to color {color}")
  
 
     
@@ -364,7 +370,7 @@ doc["colorCom_rect"].bind("input", change_com_rect_color)
 
 def show_color_rect():
     #global rect_colors
-    print(f"rect colors:{rect_colors}")
+    log(f"rect colors:{rect_colors}")
     doc["colorF_rect"].value = rect_colors['f']
     doc["colorE_rect"].value = rect_colors['e']
     doc["colorA_rect"].value = rect_colors['a']
@@ -376,9 +382,9 @@ def return_default_color_rect(event):
     rect_colors.clear()
     rect_colors.update(default_color_rect)
 
-    #print(rect_colors)
+    #log(rect_colors)
     for symbol in default_color_rect:
-        #print(f"return_color:{symbol}")
+        #log(f"return_color:{symbol}")
         selector = f"{symbol}"  
         change_rect_colors(rect_colors[symbol], selector)
     show_color_rect()
@@ -394,10 +400,10 @@ def change_text_colors(color, text_class):
 
     selector = f"text.{key}"  # užtikrinti, kad pasirenkame tik <text> elementus
     texts = doc.select(selector)
-    #print("texts",texts)
+    #log("texts",texts)
     for t in texts:
         t.setAttribute("fill", color)
-        print(f"Updated text '{t.text}' with class '{key}' to color {color}")
+        log(f"Updated text '{t.text}' with class '{key}' to color {color}")
 
 def change_f_text_color(event):
     chosen_color = doc["colorF_text"].value
@@ -419,14 +425,14 @@ doc["colorA_text"].bind("input", change_a_text_color)
 
 
 def change_p_text_color(event):
-    #print("text p color")
+    #log("text p color")
     chosen_color = doc["colorP_text"].value
     change_text_colors(chosen_color, "p")
 
 doc["colorP_text"].bind("input", change_p_text_color)
 
 def change_com_text_color(event):
-   # print("text p color")
+   # log("text p color")
     chosen_color = doc["colorCom_text"].value
     change_text_colors(chosen_color, "com")
 
@@ -436,9 +442,9 @@ def return_default_color_text(event):
     global default_color_text
     text_colors.clear()
     text_colors.update(default_color_text)
-    print(text_colors)
+    log(text_colors)
     for symbol in text_colors:
-        #print(f"return_color:{symbol}")
+        #log(f"return_color:{symbol}")
         selector = f"{symbol}"  
         change_text_colors(text_colors[symbol], selector)
     show_color_text()
@@ -446,7 +452,7 @@ def return_default_color_text(event):
 doc["change_color_text_back"].bind("click", return_default_color_text)
 
 def show_color_text():
-    #print(f"rect colors:{text_colors}")
+    #log(f"rect colors:{text_colors}")
     doc["colorF_text"].value = text_colors['f']
     doc["colorE_text"].value = text_colors['e']
     doc["colorA_text"].value = text_colors['a']
@@ -456,16 +462,16 @@ def show_color_text():
 #Stroke
 def change_rect_stroke_colors(color, stroke_class):
     key = stroke_class.lstrip(".")  # pašalinti tašką, jei buvo CSS stiliaus klasė
-    print(f"Stroke class: {key}, old color: {stroke_colors[key]}, new color{color}")
+    log(f"Stroke class: {key}, old color: {stroke_colors[key]}, new color{color}")
     stroke_colors[key] = color
     window.localStorage["stroke_colors"] = json.dumps(stroke_colors)
 
     selector = f"rect.{key}, ellipse.{key}"  # pasirenkame tik <stroke> elementus su ta klase
     shapes = doc.select(selector)
-    print
+    #log
     for shape in shapes:
         shape.setAttribute("stroke", color)
-        print(f"Updated <stroke> with class '{key}' to color {color}")
+        log(f"Updated <stroke> with class '{key}' to color {color}")
 
 def change_f_stroke_color(event):
     chosen_color = doc["colorF_stroke"].value
@@ -501,9 +507,9 @@ def return_default_color_stroke(event):
     global default_color_stroke
     stroke_colors.clear()
     stroke_colors.update(default_color_stroke)
-    #print(stroke_colors)
+    #log(stroke_colors)
     for symbol in default_color_stroke:
-        #print(f"return_color:{symbol}")
+        #log(f"return_color:{symbol}")
         selector = f"{symbol}"  
         change_rect_stroke_colors(stroke_colors[symbol], selector)
     show_color_stroke()
@@ -511,7 +517,7 @@ def return_default_color_stroke(event):
 doc["change_color_stroke_back"].bind("click", return_default_color_stroke)
 
 def show_color_stroke():
-    print(f"rect colors:{stroke_colors}")
+    log(f"rect colors:{stroke_colors}")
     doc["colorF_stroke"].value = stroke_colors['f']
     doc["colorE_stroke"].value = stroke_colors['e']
     doc["colorA_stroke"].value = stroke_colors['a']
@@ -535,14 +541,14 @@ def bind_color_input(input_id, change_func, symbol):
 
 
 def show_color_all_svg():
-    print(f"Rectangle colors:")
+    log(f"Rectangle colors:")
     show_color_rect()
-    print(f"Text colors:")
+    log(f"Text colors:")
     show_color_text()
-    print(f"rect stroke colors:")
+    log(f"rect stroke colors:")
     show_color_stroke()
 show_color_all_svg()       
 
 # diagram = ProofDiagram(panel)
 
-# print(diagram)
+# log(diagram)
