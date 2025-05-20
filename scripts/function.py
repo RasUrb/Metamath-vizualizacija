@@ -3,7 +3,11 @@
 import re
 from mmverify_on_html import process_metamath_texts
 import copy
+DEBUG = False
 
+def log(msg):
+    if DEBUG:
+        print(f"[DEBUG] {msg}")
 
 Stmttype = ["$c", "$v", "$f", "$e", "$a", "$d"] #["$f", "$e", "$a", "$d", "$p"]
 #offset_x, offset_y = 0, 0  # Variables to store the mouse offset relative to the element
@@ -85,7 +89,7 @@ class Function:
     def curate_proofs_code_name(self, text):
         self.proofs_code_name = self.get_between_markers(
         text, "\n", "$p")
-        ## print("curted code name", self.proofs_code_name)
+        ## log("curted code name", self.proofs_code_name)
         pass
     
     def extract_proof_elements_with_comment(self, text: str):
@@ -114,9 +118,9 @@ class Function:
             no_comments_texts, "$p", "$="
         )
         proofs = self.get_between_markers_and_enter(no_comments_texts, "$=", "$.")
-        print("rew with comments",self.extract_proof_elements_with_comment(self.original_text))
+        #log(f"rew with comments: {self.extract_proof_elements_with_comment(self.original_text)}")
         self.proofs_raw = self.extract_proof_elements_with_comment(self.original_text)#self.clear_enter(proofs)
-        ## print(f"row_proofs: {self.proofs_raw}")
+        ## log(f"row_proofs: {self.proofs_raw}")
         return self.proof_name, self.proofs_raw
 
     def find_and_change(self, proofs, stm, name, change):
@@ -127,7 +131,7 @@ class Function:
             #get place and functions
             for j, func in enumerate(proof):
                 if name == func.strip():
-                    # print(f"Match found at proofs[{i}][{j}]: replacing '{func.strip()}' with '{stm}  {change}'")
+                    log(f"Match found at proofs[{i}][{j}]: replacing '{func.strip()}' with '{stm}  {change}'")
                     proof_change[i][j] = f"{stm }  {change}"
         return proof_change
 
@@ -135,13 +139,13 @@ class Function:
     def find_add_and_change(self, proofs, stm, code_name, proof_name, change):
         code_name=code_name.strip()
         for i, proof in enumerate(proofs):
-            # print(f"\n Tikrinamas proof[{i}]: {proof}")
+            #log(f"\n Tikrinamas proof[{i}]: {proof}")
             new_proof = []
             if code_name in proof:
-                # print(f"Found '{code_name}' proof[{i}]")
+                # log(f"Found '{code_name}' proof[{i}]")
                 for j,token in enumerate(proof):
                     if token.strip()== code_name:
-                        # print(f"  ↪ Change token[{j}] ('{token}')")
+                        # log(f"  ↪ Change token[{j}] ('{token}')")
                         new_proof.extend([f"{stm} {proof_name}"] + change)
                     else:
                         new_proof.append(token)
@@ -151,16 +155,16 @@ class Function:
     def create_proof_step_by_step(self, proofs):
         self.proof_step_by_step = copy.deepcopy(proofs)
         for i, code_name in enumerate(self.proofs_code_name):
-            # print(code_name)
+            # log(code_name)
             self.proof_step_by_step =  self.find_add_and_change(self.proof_step_by_step,"$p",code_name, self.proof_name[i],self.proof_step_by_step[i])
         return self.proof_step_by_step
     #Irodymas kureme parodomi irodymas, be jo zingsniu
     def create_main_proof(self, proofs):
         self.proof_main_only = copy.deepcopy(proofs)
-        ## print("cia",self.proof_main_only)
+        ## log("cia",self.proof_main_only)
         for i, name in enumerate(self.proofs_code_name):
             self.proof_main_only = self.find_and_change(self.proof_main_only,"$p",name,self.proof_name[i])
-        # print("main proof:", self.proof_main_only )
+        # log("main proof:", self.proof_main_only )
 
     """ selects functions from the text with their names. The resulting function names are compared with the existing names in proof and replaced by the function 
     # Returns proof. Which has a parsed proof"""
@@ -168,7 +172,7 @@ class Function:
         
         no_comments_texts = self.clear_comments()
         self.proof_name, proofs = self.get_proofs_and_names()
-        ## print(f"getsName: {self.proof_name}")
+        ## log(f"getsName: {self.proof_name}")
         if len(self.proof_name) == len(proofs):
             for stm in Stmttype:
                 getsName = self.get_between_markers(no_comments_texts, "\n", stm)
@@ -178,9 +182,9 @@ class Function:
                     for i, name in enumerate(getsName):
                         proofs = self.find_and_change(proofs, stm, name, elemtStr[i])
             
-        # print(f"end goten proofs: {proofs}")
+        # log(f"end goten proofs: {proofs}")
         self.create_main_proof(proofs)
-        ## print(f"end proofs: {proofs}")
+        ## log(f"end proofs: {proofs}")
         self.create_proof_step_by_step(proofs)
         
     def error_start(self, line_num):
@@ -219,12 +223,12 @@ class Function:
                 #     f'<span class="highlight">{self.modify_text_array[start_idx]}'
                 # )
 
-                # print(f"line {self.line_num[line-1]}, eror, place ", self.line_num[line-1])
+                # log(f"line {self.line_num[line-1]}, eror, place ", self.line_num[line-1])
                 self.line_num[line-1] = (
                      f'<span class="highlight">{self.line_num[line-1]} </span>'
                 )
                 self.modify_text_array[line-1] = f'<span class="highlight"> {self.modify_text_array[line-1]}</span>'
-            # print("line_num", self.line_num)
+            # log("line_num", self.line_num)
 
         #self.modify_text_array[idx] = f"{self.modify_text_array[idx]}</span>"
         #self.line_num[idx] = f"{self.line_num[idx]}</span>"
@@ -264,7 +268,7 @@ class Function:
         if texts is not None:
             self.original_text = texts
         self.modify_text_array = self.replace_to_math_symbols(self.original_text).split("\n")
-        # ## print(self.modify_text_array)
+        # ## log(self.modify_text_array)
         self.line_count = len(self.modify_text_array)
         self.line_num = [f"{i+1}" for i in range(self.line_count)]
 
@@ -320,11 +324,11 @@ class Function:
     def verify_mm(self, texts=None):
         self.update_self(texts)
         text = self.replace_to_math_symbols(self.original_text)
-        print(text)
+        
         self.error_collector = process_metamath_texts(text.split("\n"))
         error_lines = self.error_collector.get_all_line_nums()
+        log(f" error line {error_lines}")
         self.modify_textarea(error_lines)
         self.original_text = self.original_text
         self.build_internal_proof_structure()
-        
         
