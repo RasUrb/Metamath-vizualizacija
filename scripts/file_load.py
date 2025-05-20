@@ -106,8 +106,6 @@ Extras:
 Then press "Submit" to apply your changes.
 '''
     alert(call_text)
-    
-how_move = """To move graph push a,w,s,d or arrow. Push r to move back to original place."""
 
 
 
